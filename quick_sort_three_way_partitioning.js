@@ -1,3 +1,7 @@
+/** 
+This implements Lomoto's Partitioning (used in Quicksort)
+*/
+
 function dutch_flag_sort(balls) {
     let bluePointer = 0;
     let redPointer = 0;
