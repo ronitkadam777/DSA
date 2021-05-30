@@ -3,54 +3,52 @@
  * @return {number[]}
  */
 var sortArray = function(nums) {
-    if(nums.length === 1) return nums;
-    //nums = [-2,3,-5];
-    return mergeHelper(nums, 0, nums.length-1);
+    merge(nums, 0, nums.length-1, 0);
+    return nums;
 };
 
-function mergeHelper(array, startIndex, endIndex) {
-    if(startIndex >= endIndex) return;
-    var midIndex = startIndex + Math.floor((endIndex-startIndex)/2);
-    mergeHelper(array, startIndex, midIndex);
-    mergeHelper(array, midIndex+1, endIndex);
-    merge(array, startIndex, midIndex, endIndex);
-    return array;
+function merge(array, startIndex, endIndex, level) {
+    if(endIndex <= startIndex) return array;
+    
+    let mid = Math.floor((endIndex + startIndex)/2);
+    
+    merge(array, startIndex, mid, level+1);
+    merge(array, mid+1, endIndex, level+1);
+    
+    mergeArrays(array, startIndex, mid, endIndex);    
 }
 
-function merge(array, startIndex, midIndex, endIndex) {
-    //[5,4], 0 0 1
-    var auxillaryArray = new Array(endIndex - startIndex + 1);
-    //Size:2
-    //First Array runs from startIndex until midIndex
-    //Second Array runs from midIndex+1 until endIndex
-    let firstStart = startIndex;
-    const firstEnd = midIndex;
-    let secondStart = midIndex+1;
-    let auxCounter = 0;
+function mergeArrays(array, startIndex, mid, endIndex) {
+    let a1_pointer = startIndex;
+    let a2_pointer = mid+1;
+    let fixedMid = mid;
+    let aux = [];
     
-    while(startIndex <= midIndex && secondStart <= endIndex) {
-        if(array[startIndex] <= array[secondStart]) {
-            auxillaryArray[auxCounter] = array[startIndex];
-            startIndex++;
-            auxCounter++;
+    // Combining 2 sorted arrays 
+    while(a1_pointer <= fixedMid && a2_pointer <= endIndex) {
+        if(array[a1_pointer] < array[a2_pointer]) {
+            aux.push(array[a1_pointer]);
+            a1_pointer = a1_pointer+1;
         } else {
-            auxillaryArray[auxCounter] = array[secondStart];
-            secondStart++;
-            auxCounter++;
-        }        
+            aux.push(array[a2_pointer]);
+            a2_pointer = a2_pointer+1;  
+        }
     }
-    while(startIndex <= firstEnd) {
-        auxillaryArray[auxCounter] = array[startIndex];
-        startIndex++;
-        auxCounter++;
+    
+    while(a1_pointer <= fixedMid) {
+        aux.push(array[a1_pointer]);
+        a1_pointer = a1_pointer+1;
     }
-    while(secondStart <= endIndex) {
-        auxillaryArray[auxCounter] = array[secondStart];
-        secondStart++;
-        auxCounter++;
+    
+    while(a2_pointer <= endIndex) {
+        aux.push(array[a2_pointer]);
+        a2_pointer = a2_pointer+1;
     }
-    for(let i = 0; i < auxillaryArray.length; i++) {
-        array[firstStart] = auxillaryArray[i];
-        firstStart++;
+    
+    // Updating the original array with the sorted auxillary
+    counter=0;
+    for(let i = startIndex; i <= endIndex; i++) {
+        array[i] = aux[counter];
+        counter = counter + 1;
     }
 }
