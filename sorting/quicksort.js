@@ -3,51 +3,38 @@
  * @return {number[]}
  */
 var sortArray = function(nums) {
-    if(nums.length < 2) return nums;
-    return quickSortHelper(nums, 0, nums.length - 1);
+    if(nums < 2) return nums;
+    
+    quickSortHelper(nums, 0, nums.length);
+    return nums;
 };
 
 function quickSortHelper(nums, startIndex, endIndex) {
-    //Base Case
-    if(startIndex >= endIndex) return null;
-    //Selecting PivotIndex from a valid range of the array in the iteration
+    if(startIndex >= endIndex) return;
     let pivotIndex = startIndex + Math.floor((endIndex - startIndex)/2);
-    //Lomoto's Partitioning
-    //Swaps pivot with first position of array in the iteration
+    let pivotValue = nums[pivotIndex];
     swap(nums, startIndex, pivotIndex);
-    //Assigns the starting index of the iteration as a pivotIndex
-    pivotIndex = startIndex;
-    //Initializing the left / orange and right / green pointers
-    let left = startIndex + 1;
-    let right = startIndex + 1;
-    //Actual partitioning logic
-    while(right <= endIndex) {
-        if(nums[right] > nums[pivotIndex]) {
-            right++;
+    let green = startIndex + 1;
+    let orange = startIndex + 1;
+    while(green <= endIndex) {
+        if(nums[green] <= pivotValue) {
+            swap(nums, orange, green);
+            green = green + 1;
+            orange = orange + 1;
         } else {
-            swap(nums, left, right);
-            left++;
-            right++;
+            green = green + 1;
         }
     }
-    //Bringing back the left pointer into the < pivot value territory
-    left--;
-    //Swapping the pivot with the max of the < pivot territory
-    //This now ensures all elements before / after pivot as less / greater than it resp.
-    swap(nums, pivotIndex, left);
-    //Re-assigning startIndex to the original start index of the array in iteration (which was pivotIndex)
-    startIndex = pivotIndex;
-    //Reassigning pivotIndex to the left pointer 
-    pivotIndex = left;
-    //Dividing the array into a before and after pivot for sorting
-    quickSortHelper(nums, startIndex, pivotIndex - 1);
-    quickSortHelper(nums, pivotIndex + 1, endIndex);
-    return nums;
+    swap(nums, startIndex, orange-1);
+    // Ensure the pivotIndex is updated after the partion
+    pivotIndex = orange - 1;
+    quickSortHelper(nums, startIndex, pivotIndex-1);
+    quickSortHelper(nums, pivotIndex+1, endIndex);
 }
 
-//Helper function that swaps two elements of an array
-function swap(arr, left, right) {
-    let temp = arr[left];
-    arr[left] = arr[right];
-    arr[right] = temp;
+
+function swap(array, index1, index2) {
+    let temp = array[index1];
+    array[index1] = array[index2];
+    array[index2] = temp;
 }
