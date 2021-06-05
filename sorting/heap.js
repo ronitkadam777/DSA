@@ -17,6 +17,11 @@ class MinHeap  {
     peek() {
         if(this.heap[1]) return this.heap[1];
     }
+
+    // Returns the size of the heap 
+    size() {
+      return this.heap.length-1;
+    }
     
     // Inserts element at the end of the heap and then heapifies it up
        insert(element) {
@@ -54,7 +59,7 @@ class MinHeap  {
             let rightChildIndex = (parentIndex * 2) + 1;
          
              // Checks if parent is greater gets swapped with the lower of the 2 children
-             if((this.heap[parentIndex] > this.heap[leftChildIndex]) && (this.heap[leftChildIndex] < this.heap[rightChildIndex])) {
+             if((this.heap[parentIndex] > this.heap[leftChildIndex]) && (this.heap[leftChildIndex] <= this.heap[rightChildIndex])) {
               [this.heap[parentIndex], this.heap[leftChildIndex]] = [this.heap[leftChildIndex], this.heap[parentIndex]];
               parentIndex = leftChildIndex;
              } else if (this.heap[parentIndex] > this.heap[rightChildIndex]) {
