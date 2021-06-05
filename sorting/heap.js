@@ -59,7 +59,7 @@ class MinHeap  {
             let rightChildIndex = (parentIndex * 2) + 1;
          
              // Checks if parent is greater gets swapped with the lower of the 2 children
-             if((this.heap[parentIndex] > this.heap[leftChildIndex]) && (this.heap[leftChildIndex] <= this.heap[rightChildIndex])) {
+             if((this.heap[parentIndex] > this.heap[leftChildIndex]) && ((this.heap[leftChildIndex] <= this.heap[rightChildIndex]) || this.heap[rightChildIndex] === undefined)) {
               [this.heap[parentIndex], this.heap[leftChildIndex]] = [this.heap[leftChildIndex], this.heap[parentIndex]];
               parentIndex = leftChildIndex;
              } else if (this.heap[parentIndex] > this.heap[rightChildIndex]) {
