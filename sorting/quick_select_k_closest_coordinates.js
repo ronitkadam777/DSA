@@ -1,54 +1,85 @@
 /**
  * @param {number[][]} points
- * @param {number} K
+ * @param {number} k
  * @return {number[][]}
  */
-var kClosest = function(points, K) {
-    let pointsArray = points;
-    return quickSort(points, 0, points.length -1, K-1).slice(0,K);
-};
-
-function calculateDistance(point) {
-    return Math.sqrt((point[0]*point[0]) + (point[1]*point[1]));
-}
-
-function quickSort(nums, startIndex, endIndex, k) {
-    //Base Case
-    let targetIndex = k;
-    if(startIndex >= endIndex) return nums;
-    //Randomly select the pivot in the above range
-    let pivotIndex = startIndex + Math.floor((endIndex - startIndex)/2);
+var kClosest = function(n_points, k) {
     
-    //Lomoto's Partitioning Code
-    swap(nums, startIndex, pivotIndex);
-    let largerPointer = startIndex;
-    let smallerPointer = startIndex;
-    while(largerPointer <= endIndex) {
-        if(calculateDistance(nums[largerPointer]) > calculateDistance(nums[0])) {
-            largerPointer++;
+    // Write your code here
+    let distanceArray = [];
+    let distanceMap = new Map();
+    let result = [];
+    
+    // Iterates over neighbouring points and creates a distance array
+    // and distance map (distance[coordinates])
+    for(let i=0; i < n_points.length; i++) {
+        let [x2,y2] = n_points[i];
+        let distance = calculateDistance(0, 0, x2, y2);
+        distanceArray.push(distance);
+        if(!distanceMap.has(distance)) {
+            distanceMap.set(distance, [[x2, y2]]);
         } else {
-            swap(nums, smallerPointer, largerPointer);
-            smallerPointer++;
-            largerPointer++;
+            let coordinateArray = distanceMap.get(distance);
+            coordinateArray.push([x2, y2]);
+            distanceMap.set(distance, coordinateArray);
         }
     }
-    smallerPointer = smallerPointer - 1;
-    swap(nums, smallerPointer, startIndex);
-    pivotIndex = smallerPointer;
-    if(pivotIndex === targetIndex) {
-        return nums;
-    } else if(pivotIndex < targetIndex) {
-        quickSort(nums, pivotIndex+1, endIndex, k);
-    } else {
-        quickSort(nums, startIndex, pivotIndex-1, k);
+    console.log(distanceArray);
+    
+    // Quickselect on the distance array
+    //quickSelect(distanceArray, 0, distanceArray.length-1);
+    quickSelect(distanceArray, 0, distanceArray.length-1, k);
+    console.log(distanceArray);
+    //Post processing
+    for(let i=0; i<k; i++) {
+        let coordinateArray = distanceMap.get(distanceArray[i]);
+        result.push(...coordinateArray);
     }
-    return nums;
+    return result.slice(0,k);
+};
+
+// Quickselect 
+function quickSelect(array, startIndex, endIndex, k) {
+    // Base Case
+    if(startIndex >= endIndex) return;
+    // Partition
+    let pivotIndex = Math.floor((startIndex + endIndex)/2);
+    let pivotValue = array[pivotIndex];
+    swap(array, startIndex, pivotIndex);
+    let leftPointer = startIndex+1;
+    let rightPointer = startIndex+1;
+    while(rightPointer <= endIndex) {
+        if(array[rightPointer] >= pivotValue) {
+            rightPointer = rightPointer + 1;
+        } else {
+            swap(array, leftPointer, rightPointer);
+            leftPointer = leftPointer + 1;
+            rightPointer = rightPointer + 1;
+        }
+    }
+    leftPointer = leftPointer - 1;
+    swap(array, leftPointer, startIndex);
+    // Recursive Case
+    // Note: Left pointer now points to the updated pivot location (post partitioning)
+    if(leftPointer === k) {
+        return;
+    } else if(leftPointer < k) {
+        quickSelect(array, leftPointer+1, endIndex, k);
+    } else {
+        quickSelect(array, startIndex, leftPointer-1, k);
+    }
 }
 
-function swap(nums, firstIndex, secondIndex) {
-    if(nums[firstIndex] !== nums[secondIndex]) {
-        let temp = nums[firstIndex];
-        nums[firstIndex] = nums[secondIndex];
-        nums[secondIndex] = temp;   
-    }
+// Helper function to calculate the distance
+function calculateDistance(x1, y1, x2, y2) {
+    let x = Math.abs(x2-x1);
+    let y = Math.abs(y2-y1);
+    return Math.pow(Math.pow(x,2) + Math.pow(y,2), 0.5);
+}
+
+// Helper function to swap
+function swap(arr, left, right) {
+    let temp = arr[left];
+    arr[left] = arr[right];
+    arr[right] = temp;
 }
