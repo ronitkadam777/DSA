@@ -1,55 +1,35 @@
-/**
- * @param {number[][]} points
- * @param {number} k
- * @return {number[][]}
+/*
+ * Complete the 'nearest_neighbours' function below.
+ *
+ * The function accepts integer p_x, p_y, k and a 2D integer array n_points as parameter.
  */
-var kClosest = function(n_points, k) {
-    
+
+function nearest_neighbours(p_x, p_y, k, n_points) {
     // Write your code here
-    let distanceArray = [];
-    let distanceMap = new Map();
+    let origin_x = p_x;
+    let origin_y = p_y;
     let result = [];
     
-    // Iterates over neighbouring points and creates a distance array
-    // and distance map (distance[coordinates])
-    for(let i=0; i < n_points.length; i++) {
-        let [x2,y2] = n_points[i];
-        let distance = calculateDistance(0, 0, x2, y2);
-        distanceArray.push(distance);
-        if(!distanceMap.has(distance)) {
-            distanceMap.set(distance, [[x2, y2]]);
-        } else {
-            let coordinateArray = distanceMap.get(distance);
-            coordinateArray.push([x2, y2]);
-            distanceMap.set(distance, coordinateArray);
-        }
-    }
-    console.log(distanceArray);
     
     // Quickselect on the distance array
-    //quickSelect(distanceArray, 0, distanceArray.length-1);
-    quickSelect(distanceArray, 0, distanceArray.length-1, k);
-    console.log(distanceArray);
-    //Post processing
-    for(let i=0; i<k; i++) {
-        let coordinateArray = distanceMap.get(distanceArray[i]);
-        result.push(...coordinateArray);
-    }
-    return result.slice(0,k);
-};
+    quickSelect(n_points, 0, n_points.length-1, k, origin_x, origin_y);
+    return n_points.slice(0,k);
+}
 
-// Quickselect 
-function quickSelect(array, startIndex, endIndex, k) {
+function quickSelect(array, startIndex, endIndex, k, origin_x, origin_y) {
     // Base Case
     if(startIndex >= endIndex) return;
     // Partition
     let pivotIndex = Math.floor((startIndex + endIndex)/2);
-    let pivotValue = array[pivotIndex];
+    let [pivotValue_x, pivotValue_y] = array[pivotIndex];
     swap(array, startIndex, pivotIndex);
     let leftPointer = startIndex+1;
     let rightPointer = startIndex+1;
+    let pivotDistanceFromOrigin = calculateDistance(origin_x, origin_y, pivotValue_x, pivotValue_y);
     while(rightPointer <= endIndex) {
-        if(array[rightPointer] >= pivotValue) {
+        // Calculate the distance of the coordinates from the origin and swap the coordinates on the fly
+        // instead of maintaining a distance array
+        if(calculateDistance(origin_x, origin_y, array[rightPointer][0], array[rightPointer][1]) >= pivotDistanceFromOrigin) {
             rightPointer = rightPointer + 1;
         } else {
             swap(array, leftPointer, rightPointer);
@@ -64,17 +44,16 @@ function quickSelect(array, startIndex, endIndex, k) {
     if(leftPointer === k) {
         return;
     } else if(leftPointer < k) {
-        quickSelect(array, leftPointer+1, endIndex, k);
+        quickSelect(array, leftPointer+1, endIndex, k, origin_x, origin_y);
     } else {
-        quickSelect(array, startIndex, leftPointer-1, k);
+        quickSelect(array, startIndex, leftPointer-1, k, origin_x, origin_y);
     }
 }
 
+
 // Helper function to calculate the distance
 function calculateDistance(x1, y1, x2, y2) {
-    let x = Math.abs(x2-x1);
-    let y = Math.abs(y2-y1);
-    return Math.pow(Math.pow(x,2) + Math.pow(y,2), 0.5);
+    return Math.sqrt(((x2-x1)*(x2-x1)) + ((y2-y1)*(y2-y1)));
 }
 
 // Helper function to swap
