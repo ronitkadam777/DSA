@@ -10,6 +10,8 @@
  * LOGIC: 
  * Local Problem: Find the local maxPath, Math.max(LH+Root, RH+root, root); return to parent
  * Global Problem: Find the global maxPath, Math.max(globalMax, LH+Root, RH+root, LH+RH+root, root) update globally
+ * 
+ * Coded with the assumption: Path at any node include all the way until leafs 
  */
 let maxGlobalPath;
 var maxPathSum = function(root) {
