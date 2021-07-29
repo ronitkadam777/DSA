@@ -15,7 +15,7 @@
  */
 
  /**
- * LOGIC: 
+ * LOGIC (Top Down Construction)
  * Keep finding middle of linked list using slow / fast pointer, 
  * cut off connections before and after mid; Edge case: When mid is same as head handle seperately
  */
