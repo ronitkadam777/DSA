@@ -27,8 +27,9 @@ public class Solution {
     }
 
     public void helper(TreeNode root, TreeNode p) {
-        
+        // If found the target element
         if(root.val == p.val) {
+            // Case 1: 
             // Check if any right child and subsequent left paths exists
             if(root.right != null) {
                 root = root.right;
@@ -36,13 +37,14 @@ public class Solution {
                     root = root.left;
                 }
                 successor = root;
-                //System.out.println("Found successor "+ successor.val);
                 return;
+            // Whatever was the latest node on which left turn was made is the successor
+            // This node is tracked while traversing the BST while finding the target node
             } else {
                 successor = latestLeft;
-                //System.out.println("Found successor "+ successor.val);
                 return;
             }
+            // Traversing the tree to find the target node before finding it's successor
         } else if(root.val < p.val) {
             if(root.right != null) {
                 helper(root.right, p);
